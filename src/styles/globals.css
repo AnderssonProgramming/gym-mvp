@@ -1,0 +1,6 @@
+/* src/styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Aquí puedes añadir tus customizaciones en CSS */
