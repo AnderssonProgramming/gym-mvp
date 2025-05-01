@@ -1,0 +1,11 @@
+Model Information:
+* title:	Lowpoly male basemesh unwrapped
+* source:	https://sketchfab.com/3d-models/lowpoly-male-basemesh-unwrapped-9aa1e8a620b04fab8325abee33fb2624
+* author:	BitHack (https://sketchfab.com/bithack)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Lowpoly male basemesh unwrapped" (https://sketchfab.com/3d-models/lowpoly-male-basemesh-unwrapped-9aa1e8a620b04fab8325abee33fb2624) by BitHack (https://sketchfab.com/bithack) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
