@@ -1,31 +1,80 @@
-// components/ExerciseList.tsx
-import React from 'react'
+import React from 'react';
 
-export interface Exercise {
-  name: string
-  sets: number
-  reps: number
-  videoUrl?: string
-  imageUrl?: string
+interface Exercise {
+  name: string;
+  sets: number;
+  reps: number;
+  videoUrl?: string;
+  imageUrl?: string;
 }
 
-interface Props { exercises: Exercise[] }
+function YouTubeEmbed({ url }: { url: string }) {
+  // Extraer el ID del video de la URL de YouTube
+  const getYouTubeId = (youtubeUrl: string) => {
+    const regex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = youtubeUrl.match(regex);
+    return match ? match[1] : null;
+  };
 
-/* components/ExerciseList.tsx */
-export default function ExerciseList({ exercises }: Props) {
-  if (!exercises.length) return <p>No hay ejercicios para esta zona.</p>
-    return (
-      <div className="space-y-4">
-        {exercises.map((ex) => (
-          <div key={ex.name} className="p-4 border rounded shadow">
-            <h3 className="font-bold">{ex.name}</h3>
-            <p className="text-sm text-gray-600">{ex.sets} sets × {ex.reps} repeticiones</p>
-            {ex.videoUrl
-              ? <video src={ex.videoUrl} controls className="w-full mt-2 rounded" />
-              : ex.imageUrl && <img src={ex.imageUrl} alt={ex.name} className="w-full mt-2 rounded" />}
-          </div>
-        ))}
-      </div>
-    )
-  }
+  const videoId = getYouTubeId(url);
   
+  if (!videoId) {
+    return <div className="text-red-500">Error: URL de YouTube inválida</div>;
+  }
+
+  return (
+    <div className="aspect-w-16 aspect-h-9 w-full rounded-lg overflow-hidden my-4">
+      <iframe
+        src={`https://www.youtube.com/embed/${videoId}`}
+        title="YouTube video player"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full h-full"
+      ></iframe>
+    </div>
+  );
+}
+
+function ExerciseList({ exercises }: { exercises: Exercise[] }) {
+  if (!exercises || exercises.length === 0) {
+    return <div className="text-center py-8">No hay ejercicios disponibles para esta zona</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      {exercises.map((exercise, index) => (
+        <div key={index} className="border rounded-lg p-4 bg-gray-50">
+          <h3 className="text-xl font-bold mb-2">{exercise.name}</h3>
+          
+          <div className="flex flex-wrap gap-4 mb-3">
+            <div className="bg-red-100 text-red-800 rounded-full px-3 py-1">
+              {exercise.sets} series
+            </div>
+            <div className="bg-blue-100 text-blue-800 rounded-full px-3 py-1">
+              {exercise.reps} repeticiones
+            </div>
+          </div>
+          
+          {/* Video de YouTube si existe */}
+          {exercise.videoUrl && (
+            <YouTubeEmbed url={exercise.videoUrl} />
+          )}
+          
+          {/* Imagen si existe */}
+          {exercise.imageUrl && !exercise.videoUrl && (
+            <div className="mt-4">
+              <img 
+                src={exercise.imageUrl} 
+                alt={`Imagen de ${exercise.name}`}
+                className="rounded-lg max-h-64 w-auto mx-auto"
+              />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default ExerciseList;

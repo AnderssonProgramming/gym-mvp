@@ -4,7 +4,7 @@
 
 import React, { useRef, useState, useEffect } from 'react'
 import { Canvas, useFrame, extend } from '@react-three/fiber'
-import { OrbitControls, useGLTF, Html } from '@react-three/drei'
+import { OrbitControls, useGLTF} from '@react-three/drei'
 import * as THREE from 'three'
 import ExerciseList from './ExerciseList'
 
@@ -31,40 +31,40 @@ interface Exercise {
 const mockExercises: Record<string, Exercise[]> = {
   chest: [
     { name: "Press de Banca", sets: 4, reps: 12, videoUrl: "https://www.youtube.com/watch?v=SCVCLChPQFY&pp=ygULcHJlc3MgYmFuY2HSBwkJhAkBhyohjO8%3D" },
-    { name: "Aperturas con Mancuernas", sets: 3, reps: 15, imageUrl: "https://www.fitprince.com/wp-content/uploads/2017/07/Dumbbell-Fly.jpg" },
+    { name: "Aperturas con Mancuernas", sets: 3, reps: 15, imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrabpVzpblaU1F6moowgaOi-fRtRtHqJX7cw&s" },
     { name: "Fondos en Paralelas", sets: 3, reps: 10 }
   ],
   back: [
-    { name: "Dominadas", sets: 4, reps: 8, imageUrl: "https://www.fitprince.com/wp-content/uploads/2017/01/Pull-Up.jpg" },
-    { name: "Remo con Barra", sets: 3, reps: 12, imageUrl: "https://www.fitprince.com/wp-content/uploads/2017/04/Barbell-Row.jpg" },
+    { name: "Dominadas", sets: 4, reps: 8, videoUrl: "https://www.youtube.com/watch?v=vnpFhruEmsc&pp=ygUJZG9taW5hZGFz" },
+    { name: "Remo con Barra", sets: 3, reps: 12, imageUrl: "https://i.pinimg.com/736x/25/9d/02/259d026a07562252c65bcd0d74199704.jpg" },
     { name: "Pulldown en Polea", sets: 3, reps: 12 }
   ],
   biceps: [
-    { name: "Curl con Barra", sets: 4, reps: 12, imageUrl: "https://www.fitprince.com/wp-content/uploads/2017/08/Barbell-Curl.jpg" },
+    { name: "Curl con Barra", sets: 4, reps: 12, videoUrl: "https://www.youtube.com/watch?v=mFgTFstIfFs&pp=ygUOY3VybCBjb24gYmFycmE%3D" },
     { name: "Curl Martillo", sets: 3, reps: 12 }
   ],
   triceps: [
-    { name: "Extensiones con Polea", sets: 4, reps: 15, imageUrl: "https://www.fitprince.com/wp-content/uploads/2017/06/Triceps-Pushdown.jpg" },
+    { name: "Extensiones con Polea", sets: 4, reps: 15, imageUrl: "https://cdn.shopify.com/s/files/1/0269/5551/3900/files/Triceps-Pressdown_e759437b-6200-4b44-b484-14db770024a4_600x600.png?v=1612136845" },
     { name: "Fondos en Banco", sets: 3, reps: 12 }
   ],
   shoulders: [
-    { name: "Press Militar", sets: 4, reps: 10, imageUrl: "https://www.fitprince.com/wp-content/uploads/2017/03/Shoulder-Press.jpg" },
+    { name: "Press Militar", sets: 4, reps: 10, videoUrl: "https://www.youtube.com/watch?v=7x9PT6FrSLA&pp=ygUccHJlc3MgbWlsaXRhciBjb24gbWFuY3Vlcm5hcw%3D%3D" },
     { name: "Elevaciones Laterales", sets: 3, reps: 15 }
   ],
   abs: [
     { name: "Crunches", sets: 3, reps: 20 },
-    { name: "Plancha", sets: 3, reps: 60, imageUrl: "https://www.fitprince.com/wp-content/uploads/2016/05/Plank.jpg" }
+    { name: "Plancha", sets: 3, reps: 60, imageUrl: "https://hips.hearstapps.com/hmg-prod/images/mid-adult-man-doing-plank-exercise-royalty-free-image-1585917009.jpg?crop=1xw:0.84375xh;center,top&resize=1200:*" }
   ],
   glutes: [
-    { name: "Hip Thrust", sets: 4, reps: 15, imageUrl: "https://www.fitprince.com/wp-content/uploads/2017/10/Hip-Thrust.jpg" },
+    { name: "Hip Thrust", sets: 4, reps: 15, imageUrl: "https://flex-web-media-prod.storage.googleapis.com/2024/08/hip-thust-workout-2.jpg" },
     { name: "Sentadillas", sets: 3, reps: 12 }
   ],
   quads: [
-    { name: "Sentadillas", sets: 4, reps: 12, imageUrl: "https://www.fitprince.com/wp-content/uploads/2016/08/Squat.jpg" },
+    { name: "Sentadillas", sets: 4, reps: 12, imageUrl: "https://eresfitness.com/wp-content/uploads/Sentadilla-con-salto.webp" },
     { name: "Prensa de Piernas", sets: 3, reps: 15 }
   ],
   hamstrings: [
-    { name: "Peso Muerto", sets: 4, reps: 10, imageUrl: "https://www.fitprince.com/wp-content/uploads/2016/11/Deadlift.jpg" },
+    { name: "Peso Muerto", sets: 4, reps: 10, videoUrl: "https://www.youtube.com/watch?v=0XL4cZR2Ink&pp=ygULcGVzbyBtdWVydG8%3D" },
     { name: "Curl Femoral", sets: 3, reps: 12 }
   ],
   calves: [
@@ -73,31 +73,17 @@ const mockExercises: Record<string, Exercise[]> = {
   ]
 };
 
-// Posiciones manuales para cada zona (respaldo en caso de que el cálculo automático falle)
-const manualPositions: Record<string, [number, number, number]> = {
-  Object_2: [0, 1.3, -3.5],   // Pecho - frente
-  Object_3: [0, 1.3, -2.5],  // Espalda - atrás
-  Object_4: [0.7, 1.5, -5],   // Bíceps - brazo derecho
-  Object_5: [-0.7, 1.9, -1.7],  // Tríceps - brazo izquierdo
-  Object_6: [2.2, 1, 3],   // Hombros - arriba
-  Object_7: [0, 0.9, -3.3],   // Abdomen - centro/abajo
-  Object_8: [0, 0.5, -3.4],     // Glúteos - centro/muy abajo
-  Object_9: [0.3, -0.3, -3], // Cuádriceps - pierna derecha
-  Object_10: [-0.3, 2, 2.8], // Isquiotibiales - pierna izquierda
-  Object_11: [0, -3, -8], // Pantorrillas - muy abajo
-}
-
-const zones: Record<string, { zoneId: number; label: string }> = {
-  Object_2: { zoneId: 1, label: 'Pecho' },
-  Object_3: { zoneId: 2, label: 'Espalda' },
-  Object_4: { zoneId: 3, label: 'Bíceps' },
-  Object_5: { zoneId: 4, label: 'Tríceps' },
-  Object_6: { zoneId: 5, label: 'Hombros' },
-  Object_7: { zoneId: 6, label: 'Abdomen' },
-  Object_8: { zoneId: 7, label: 'Glúteos' },
-  Object_9: { zoneId: 8, label: 'Cuádriceps' },
-  Object_10: { zoneId: 9, label: 'Isquiotibiales' },
-  Object_11: { zoneId: 10, label: 'Pantorrillas' },
+const zoneLabels: Record<number, string> = {
+  1: 'Pecho',
+  2: 'Espalda',
+  3: 'Bíceps',
+  4: 'Tríceps',
+  5: 'Hombros',
+  6: 'Abdomen',
+  7: 'Glúteos',
+  8: 'Cuádriceps',
+  9: 'Isquiotibiales',
+  10: 'Pantorrillas',
 }
 
 // Exercise popup modal component with mock data
@@ -151,115 +137,32 @@ function ExercisePopup({ zoneId, onClose }: { zoneId: number; onClose: () => voi
   )
 }
 
-// Use a separate component for each button to prevent rendering issues
-function ZoneButton({ position, zoneId, label, onSelectZone }: { 
-  position: THREE.Vector3, 
-  zoneId: number, 
-  label: string,
-  onSelectZone: (zone: number) => void 
-}) {
+// Panel de botones verticales
+function ZoneButtonPanel({ onSelectZone }: { onSelectZone: (zone: number) => void }) {
   return (
-    <Html
-      position={position}
-      center
-      occlude={false}
-      zIndexRange={[100, 0]}
-      distanceFactor={10} // Increased to make buttons even smaller
-      transform
-      sprite
-    >
-      <div className="relative group">
+    <div className="absolute right-140 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-lg p-2 space-y-2 z-10">
+      {Object.entries(zoneLabels).map(([zoneId, label]) => (
         <button
-          onClick={() => onSelectZone(zoneId)}
-          className="bg-red-600 text-white rounded-full w-2 h-2 flex items-center justify-center text-[6px] font-bold shadow-sm hover:bg-red-400 border-[0.5px] border-white"
+          key={zoneId}
+          onClick={() => onSelectZone(parseInt(zoneId))}
+          className="flex items-center justify-center bg-red-600 text-white rounded-md w-10 h-10 text-sm font-bold hover:bg-red-500 transition-colors border border-white group relative"
           title={label}
         >
           {zoneId}
+          <span className="absolute left-full ml-2 whitespace-nowrap bg-black bg-opacity-75 text-white text-xs rounded px-2 py-1 hidden group-hover:block">
+            {label}
+          </span>
         </button>
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 whitespace-nowrap bg-black bg-opacity-75 text-white text-[6px] rounded px-0.5 py-0 opacity-0 group-hover:opacity-100">
-          {label}
-        </div>
-      </div>
-    </Html>
-  );
+      ))}
+    </div>
+  )
 }
 
-function Model({ modelPath, onSelectZone,selectedZoneId }: BodyCanvasProps & { selectedZoneId: number | null }) {
-  const { scene, nodes } = useGLTF(modelPath)
-  const [meshesFound, setMeshesFound] = useState<string[]>([])
-  const [showDebug, setShowDebug] = useState(true)
+function Model({ modelPath }: Omit<BodyCanvasProps, 'onSelectZone'>) {
+  const { scene } = useGLTF(modelPath)
   
-  // Debug - hide after 10 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => setShowDebug(false), 10000);
-    return () => clearTimeout(timer);
-  }, []);
-  
-  // Use effect to log found meshes once after render
-  useEffect(() => {
-    const foundMeshes: string[] = [];
-    
-    Object.entries(zones).forEach(([meshName]) => {
-      if (nodes[meshName as keyof typeof nodes]) {
-        foundMeshes.push(meshName);
-      }
-    });
-    
-    setMeshesFound(foundMeshes);
-    console.log('Found meshes:', foundMeshes);
-  }, [nodes]);
-
-  // Frame update to ensure all buttons stay visible regardless of camera angle
-  useFrame(() => {
-    // This keeps buttons facing the camera
-    // No need to manually update each button as Html with sprite=true handles this
-  });
-
-  // Debug info panel to help see what's happening
-
   return (
-    <group>
-      <primitive object={scene} />
-      
-      {/* Panel de depuración */}
-      {showDebug && selectedZoneId === null && (
-        <Html position={[0, 0, 0]} transform={false} center={false} fullscreen>
-          <div style={{ 
-            position: 'absolute', 
-            top: 0, 
-            left: 0, 
-            backgroundColor: 'rgba(0,0,0,0.7)', 
-            color: 'white',
-            padding: '10px',
-            fontSize: '12px',
-            zIndex: 1000
-          }}>
-            <p>Meshes found: {meshesFound.join(', ') || 'None'}</p>
-            <p>Showing all 10 body zones with manual positions</p>
-          </div>
-        </Html>
-      )}
-      
-      {/* Generar todos los botones de zonas usando posiciones manuales */}
-      {selectedZoneId === null && Object.entries(zones).map(([meshName, { zoneId, label }]) => {
-        // Usar posición manual en vez de depender de la geometría
-        const position = new THREE.Vector3(
-          manualPositions[meshName][0],
-          manualPositions[meshName][1],
-          manualPositions[meshName][2]
-        );
-
-        return (
-          <ZoneButton
-            key={meshName}
-            position={position}
-            zoneId={zoneId}
-            label={label}
-            onSelectZone={onSelectZone}
-          />
-        );
-      })}
-    </group>
+    <primitive object={scene} />
   );
 }
 
@@ -304,18 +207,22 @@ export default function BodyCanvas({ modelPath, onSelectZone }: BodyCanvasProps)
 
   return (
     <div className="relative h-full w-full">
+      {/* Instrucciones */}
       <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white p-2 rounded z-10">
-        Gira el modelo para ver todas las zonas
+        Selecciona el número para ver ejercicios de acuerdo a la zona
       </div>
+      
+      {/* Panel de botones vertical */}
+      {selectedZoneId === null && (
+        <ZoneButtonPanel onSelectZone={handleZoneSelect} />
+      )}
+      
+      {/* Canvas con modelo 3D */}
       <Canvas shadows camera={{ position: [0, 1.5, 3], fov: 50 }}>
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
         <directionalLight position={[-5, 5, -5]} intensity={0.5} />
-        <Model 
-          modelPath={modelPath} 
-          onSelectZone={handleZoneSelect} 
-          selectedZoneId={selectedZoneId} // Pasar el estado del popup
-        />
+        <Model modelPath={modelPath} />
         <CameraControls />
       </Canvas>
       
